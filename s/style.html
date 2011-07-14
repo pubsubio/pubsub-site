@@ -1,0 +1,404 @@
+<html> 
+	<head> 
+		<script src='/s/jshint.js'></script> 
+		<script src='/s/style.js'></script> 
+		<script src='/js/common.js'></script> 
+		<link rel='stylesheet' href='/s/style.css' type='text/css'/> 
+		<style> 
+			#lint-err {
+				display: none;
+			}
+			#lint-err {
+				font-family: monospace;
+			}
+			#lint-ok {
+				color: darkgreen;
+			}
+			#lint-err-info {
+				color: darkred;				
+			}
+			#lint-err b {
+				display: block;
+				float:left;
+				width: 60px;
+				color: darkred;
+			}
+			#lint-err .evidence {
+				background: #E8E8E8;
+			}
+			#lint-err div {
+				padding-bottom: 5px;
+			}
+			.error {
+				padding-bottom: 5px;
+			}
+			.reason {
+				float: left;
+			}
+			textarea {
+				position: absolute;
+				left: -1000px;
+				width: 750px;
+				height: 1px;
+				outline: none;
+			}
+		</style> 
+		<script> 
+			$(function() {
+				$('body, window').keydown(function(e) {
+					if (e.keyCode !== 86 || !e.metaKey) {
+						return;
+					}
+					$('textarea').focus();
+				});
+				
+				var timeout;
+				
+				$('textarea').keyup(function() {
+					var result = JSHINT('/*global exports: true, unescape: true, escape: true*/\n'+$('textarea').val(), {
+						devel: true,
+						forin: true,
+						boss: true,
+						curly: true,
+						eqeqeq: true,
+						undef: true,
+						browser: true,
+						node: true,
+						jquery: true
+					});
+					
+					$('textarea').val('').blur();
+					
+					var errors = function() {
+						if (JSHINT.data() && JSHINT.data().errors && JSHINT.data().errors.length) {						
+							var errors = '<p>';
+ 
+							for (var i = 0; i < JSHINT.data().errors.length; i++) {
+								var err = JSHINT.data().errors[i];
+ 
+								if (!err) {
+									continue;
+								}
+ 
+								errors += '<div class="error"><b>'+(err.line-1)+':'+err.character+'</b> <div class="reason">'+err.reason+'</div> <span class="evidence">'+(err.evidence+'').replace(/</g, '&lt;').replace(/>/g, '&gt;') +'</span></div>';
+							}
+							
+							if (errors === '<p>') {
+								$('#lint-err').hide();
+								return false;
+							}
+ 
+							$('#lint-err').html(errors+'</p>').show();
+							
+							var max = 0;
+							
+							$('.reason').each(function(i, el) {
+								max = Math.max($(el).outerWidth(), max);
+							});
+							max += 20;
+							
+							$('.reason').each(function(i, el) {
+								$(el).width(max+'px');
+							});
+							
+							return true;
+						} else {
+							$('#lint-err').hide();
+							return false;
+						}					
+					};
+					
+					clearTimeout(timeout);
+					
+					$('#place-holder').hide();
+ 
+					if (errors()) {
+						$('#lint-ok').hide();
+					} else {
+						$('#lint-ok').show();
+						timeout = setTimeout(function() {
+							$('#place-holder').slideDown();
+						}, 3000);
+					}
+					
+					$(document).scrollTop(0);
+				});
+			});
+		</script> 
+		<title>Style.js</title> 
+	</head> 
+	<body> 
+		<div id='top'></div> 
+		<h1 id='lint'>Style</h1> 
+		<div style='height:40px; overflow:hidden'> 
+			<p id='place-holder'> 
+				Paste your code anywhere on this site and js hint will be ran with the style configured to our current guidelines.
+			</p> 
+			<p id='lint-ok'> 
+				Everything went better than expected! :)
+			</p> 
+			<p id='lint-err-info'> 
+				Oh no! Your code failed the lint evaluation... :(
+			</p> 
+		</div> 
+		<textarea></textarea>		
+		<p id='lint-err'></p> 
+		<h2 id='generel'>General</h2> 
+		<p> 
+			Below is listed a couple of rules that should be tried to be followed. A lot of these reflect my personal coding preferences.
+		</p> 
+		<ul> 
+			<li>Always use function statements and not function expressions
+<pre>var fn = function() { ... }; //function statement
+</pre></li> 
+			<li>All variables and functions should be camel-cased. All constants should be upper snake-cased.
+<pre>var varName = ...;
+var functionName = ...;
+var CONSTANT_NAME = ...;
+</pre></li> 
+			<li>Curly braces on the first line and always use braces when doing for, while, if, else
+<pre>if ( ... ) {
+	// if body here
+}</pre></li> 
+			<li>Groups of vars should always end with a newline
+<pre>var a = 1;
+var b = 2;
+ 
+foo();
+</pre></li> 
+			<li>Use ' for strings and not ". " should be used for strings inside strings
+<pre>var str = 'hello world';
+var xzibit = 'hello "world"';
+</pre></li> 
+			<li>Whenever a callback is used for an IO operation the format should be callback(err, value)
+<pre>request('/data', function(err, data) {
+	if (err) {
+		//something went bad
+		return;
+	}
+	//all is good
+});</pre></li> 
+		</ul> 
+		<h1>Patterns</h1> 
+		<p> 
+			The section below contains a list of very useful patterns when coding Javascript.
+		</p> 
+		<h2 id='functional-constructor'>Functional constructor</h1> 
+		<p> 
+			A functional constructor is a simple and very powerful way of creating objects in javascript.<br> 
+			It uses closures to provide perfect incapsulation and avoids 'this' spam, which sometimes can lead to lower readability.
+		</p> 
+<pre>var createObject = function() {
+	
+	// shared vars and methods across all objects here
+	
+	var sharedMethod = function() { ... };
+	var sharedVar = ...;
+	
+	return function(constructorArgs) {
+		// create the object state, could also be another functional constructor
+		var that = {};
+		
+		// private state
+		var pri = 'secret';
+		
+		// build the object
+		that.methodA = function() { ... };
+		that.methodB = sharedMethod;
+		
+		return that;
+	};
+}();
+ 
+// an object is instantiated by calling the functional constructor
+var obj = createObject();
+</pre>	
+		<h2 id='modules'>Modules</h1> 
+		<p> 
+			Modules are an excellent way on incapsulating an entire subprogram and expose only the valid parts<br> 
+			In the browser we can use a closure to provide pseudo modules
+		</p> 
+<pre>(function(exports) {
+	// everything in here is hidden
+	var pri = function() { ... };
+	
+	// unless ofcourse you bind it to the exports variable
+	export.pub = function() { ... };
+ 
+//the line below defines the name of the module and binds it to the global scope	
+}(window.moduleName = {}));
+</pre> 
+		<h2 id='shared-modules'>Shared modules</h1> 
+		<p> 
+			Sharing modules between node.js and the browser is actually quite easy accomplished by using the module
+			pattern with a small tweak
+		</p> 
+<pre>(function(exports) {
+	
+	// define your module here as you do in the module pattern
+	
+// the line below here determines whether its running in the browser or in node.js and uses the relevant exports object	
+}(typeof window === 'undefined' ? window.moduleName = {} : exports));
+</pre> 
+		<h2 id='optional-parameters'>Optional parameters</h2> 
+		<p> 
+			In general optional parameters should be the last parameter passed to the function. One exception to this rule
+			is when you also have a callback. Then the optional parameters comes before the callback<br> 
+			If more than 1-2 optional parameters are required they should be merged into an options map.
+		</p> 
+<pre>var fn = function(a, b) {
+	// b is an optional parameter with default value 'default value'
+	b = b || 'default value';
+ 
+	...
+};
+ 
+var fn = function(a, options) {
+	// this function has a lot of optional parameters, represented by an options map
+	options = options || {param1:..., param2:...};
+	
+	...
+};
+ 
+var fn = function(a, b, callback) {
+	// b is still optional
+	if (!callback) {
+		callback = b;
+		b = 'default value';
+	}
+	
+	....
+};
+</pre> 
+		<h1>Common module</h1> 
+		<p> 
+			The common module is a shared module between node.js and the browser. The module exposes a series of very useful utilities
+			mainly focused around functional programming.<br> 
+			A <a href='http://closure-compiler.appspot.com/home'>Google Closure</a> compiled version of the module can be downloaded <a href='/js/common.closure.js'>here</a> 
+		</p> 
+		<h2 id='emitter'>Emitter</h1> 
+		<p> 
+			Emitters on the server or in the client should be implemented using the event emitter interface<br> 
+			This ensures that context shift between browser and server is simpler to handle and avoids the problem of only being able to
+			assign a single handler to an event.<br> 
+			The common module exposes a method called createEmitter that returns a new emitter
+		</p> 
+<pre class='code'>var emitter = createEmitter();
+	
+emitter.on('event', function(arg1, arg2) {
+	// handle event here
+});
+ 
+//emit the event called 'event'
+emitter.emit('event', arg1, arg2);
+ 
+//remove listeners by passing the name and the handler
+emitter.removeListener('event', handler);
+</pre> 
+		<p> 
+			Using the event emitter is extremely useful when combining it with a functional constructor in the 'that' instantiating
+		</p> 
+		<h2 id='fork'>Fork</h1> 
+		<p> 
+			Fork is a simple function exposed by the common module. It splits an IO callback into an onerror and an onsuccess handler.
+		</p> 
+<pre>var read = function(callback) {
+	// does some async stuff
+	// ends by doing callback(err, value)
+};
+ 
+var onerror = function(err) {
+	// error handler
+};
+ 
+read(fork(onerror, function(value) {
+	// all went ok
+}));
+</pre> 
+		<h2 id='step'>Step</h1> 
+		<p> 
+			The problem of doing a lot of async stuff is that it turns into spaghetti code really fast.<br> 
+			This can be avoided by using the step function exposed by the common module.
+			The step function executes a series of async actions sequentially and exits to a single error handler if any of the async operations fails.
+			It also provides functionality for executing async actions in parallel.  
+		</p> 
+<pre>step([
+	function(next) {
+		//first step. pass the next function as the callback of an async action
+		fs.read(next);
+	},
+	function(value, next) {
+		// the value here is the result of the async call in the previous step
+		
+		value++;
+		fs.write(value,next);
+	},
+	function() {
+		// write succeeded, everything went ok
+		console.log('write succeeded');
+	}
+], function(err) {
+	// error handler for all async actions here
+	// this is called if a single step fails. all execution of the step then terminates
+});
+</pre> 
+		<p> 
+			To execute async actions in parallel use the next.parallel() call.
+		</p> 
+<pre>step([
+	function(next) {
+		// to execute async actions in parallel call the next.parallel() function.
+		// this returns a function that should be passed as a callback
+		for (var i = 0; i &lt; 2; i++) {
+			fs.read(next.parallel());				
+		}
+	},
+	function(values) {
+		// values here is an array of the result of the parallel async calls.
+		// the order of values is the same as the order of the async call invocations.
+	}
+], function(err) {
+	// a step failed. if a single of the parallel call fails this function is also called
+});
+</pre> 
+		<h2 id='memoizer'>Memoizer</h1> 
+		<p> 
+			A functional pattern to cache results of a function if its being ran with the same arguments as described <a href='http://en.wikipedia.org/wiki/Memoization'>here</a> 
+		</p> 
+<pre>var fibo = function(a) {
+	return a &lt; 2 ? a : fibo(a-1) + fibo(a-2);
+};
+ 
+console.log(fibo(40)); // completes in 1-2 s then prints out 102334155
+ 
+fibo = memoizer(fibo); // lets cache all results
+ 
+console.log(fibo(50)); // completes instantly then prints out 12586269025
+</pre> 
+		<h2 id='curry'>Curry</h2> 
+		<p> 
+			A functional pattern to bind arguments to a function as described <a href='http://en.wikipedia.org/wiki/Currying'>here</a> 
+		</p> 
+<pre>var add = function(a, b) {
+	return a + b;
+};
+ 
+console.log(add(1,2)); // prints 3
+ 
+var addTwo = curry(add, 2);
+ 
+console.log(addTwo(5)); // prints 7
+</pre> 
+<h2 id='format'>Format</h2> 
+<p>A format function that takes either a collection or an array as arguments</p> 
+<pre> 
+format("i can speak {language} since i was {age}",{language:'javascript',age:10}); // prints 'i can speak javascript since i was 10'
+ 
+format("i can speak {0} since i was {1}",'javascript',10}); // prints 'i can speak javascript since i was 10'
+</pre> 
+		<!--
+		<h2 id='stacking-query'>Stacking cache</h1>
+		<h2 id='stacking-cache'>Stacking proxy queue</h1>		
+		--> 
+	</body> 
+</html>

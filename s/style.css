@@ -1,0 +1,65 @@
+html, body {
+	background-color: #20293F;
+	font-family: helvetica;
+	color: #FFFFFF;
+}
+h1 {
+	font-family: courier;
+	font-size: 30px;
+}
+h2 {
+	font-family: courier;
+	font-size: 20px;
+}
+#nav a {
+	font-family: courier;
+}
+a {
+	color: #A9B0B3;
+	text-decoration: none;
+}
+pre {
+	background-color: #030C22;
+	padding: 20px 15px;
+	margin-bottom: 25px;
+}
+code {
+	font-size: 14px;
+	font-family: Monaco, Consolas, 'Lucida Console', monospace;;
+	line-height: 21px;
+}
+.sh_sourceCode {
+  font-weight: normal;
+  font-style: normal;
+}
+
+.sh_sourceCode .sh_symbol , .sh_sourceCode .sh_cbracket {
+  color: #E6E6E6;
+}
+
+.sh_sourceCode .sh_keyword {
+  color: #FFA64D;
+}
+
+.sh_sourceCode .sh_string, .sh_sourceCode .sh_regexp, .sh_sourceCode .sh_number,
+.sh_sourceCode .sh_specialchar
+{
+  color: #99E700;
+}
+
+.sh_sourceCode .sh_comment {
+  color: #DDD;
+}
+.logo {
+	font-family: 'Monofett', arial, serif; 
+	font-weight: bold;
+	font-size: 120px;
+	padding-top: 40px;
+	height: 120px;
+	margin-bottom: 10px;
+}
+.sub-text {
+	font-size: 20px;
+	font-style: italic;
+	margin-bottom: 25px;
+}

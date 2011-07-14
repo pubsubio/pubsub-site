@@ -1,0 +1,218 @@
+<!DOCTYPE> 
+<html> 
+	<head> 
+		<title>pubsub.io documentation</title> 
+		<link href='http://fonts.googleapis.com/css?family=Monofett' rel='stylesheet' type='text/css'>		
+		<link href="/s/reset.css" rel="stylesheet" type="text/css">
+		<link href="/s/style.css" rel="stylesheet" type="text/css">
+		<style> 						
+			h1, h2, h3 {
+				margin-top:10px;
+			}
+			h1 {
+				padding-top:20px;
+				margin-bottom: 35px;
+			}
+			h2 {
+				margin-bottom: 30px;
+			}
+			h3 {
+				margin-bottom: 20px;
+			}
+ 
+			p {
+				margin-top: 0;
+				margin-bottom: 22px;
+			}
+			#main {
+				font-family: helvetica;
+				margin: auto;
+				font-size: 14px;
+				line-height: 22px;
+				left: 300px;
+				position: absolute;
+				padding-right:50px;
+			}
+ 			#nav {
+				position: absolute;
+				top: 170px;
+				left: 25px;
+			}
+			#nav a {
+				display: block;
+				margin-bottom: 15px;
+			}
+
+ 			a {
+				font-size: 20px;
+				text-decoration: none;
+			}
+		</style> 
+	</head> 
+	<body> 
+		<div id='nav'>
+			<a href='#docs'>documentation</a>
+			<a href='/slides'>slides</a>
+			<a href='https://github.com/pubsubio'>github</a>
+		</div>
+		<div id='main'>
+			<div class='logo'>PUBSUB.IO</div>
+			<div class='sub-text'>documentation</div>
+ 
+<p><strong>a query based client/server publish subscribe protocol built on node.js.</strong></p> 
+ 
+<p>Client implementions currently exists for the browser and node.js.</p> 
+ 
+<pre><code>// to connect in node.js do:
+var pubsub = require('pubsub').connect('www.pubsub.io');
+ 
+// to connect in the browser do:
+var pubsub = pubsub.connect('www.pubsub.io');
+ 
+pubsub.subscribe({}, function(doc) {
+    console.log('someone published', doc);
+});
+ 
+pubsub.publish({foo:'bar'});
+</code></pre> 
+ 
+<h3><a href="http://jsconsole.com/?%3Aload%20http%3A%2F%2Fpubsub.io%2Fjs%2Fpubsub.js">try running this yourself</a></h3> 
+ 
+<p>The client library is hosted at <a href="http://pubsub.io/js/pubsub.js">http://pubsub.io/js/pubsub.js</a></p> 
+ 
+<h1>Publish</h1> 
+ 
+<p>Whenever you want to send documents to other pubsub clients you need to publish it.
+The published document is then received by all subscribers whose query match the document.</p> 
+ 
+<pre><code>pubsub.publish({name: 'pubsub', authors: ['mathias', 'ian'], version: 0.1});
+</code></pre> 
+ 
+<h1>Subscribe</h1> 
+ 
+<p>Whenever you want to receive documents from other pubsub clients you need to create a subscription with a query.
+The subscription is evaluated at the hub against all documents as they are published, if the query matches the published document your subscription handler will invoked with the document.</p> 
+ 
+<pre><code>pubsub.subscribe({name: 'pubsub', version: {$gt:0}}, function(doc) {
+    console.log('i love',doc);
+});
+</code></pre> 
+ 
+<p>Subscribe can also be called with the following options</p> 
+ 
+<pre><code>// count
+pubsub.subscribe(query, {count:2}, function(doc){
+    console.log(doc); // will be called upto 2 times
+});
+ 
+// once
+pubsub.subscribe(query, {once:true}, function(doc){
+    console.log(doc); // will be called at most once
+});
+ 
+// frequency
+pubsub.subscribe(query, {frequency:1000}, function(doc){
+    console.log(doc); // will be called at most once per 1000 ms
+});
+ 
+// select
+pubsub.subscribe(query, {select:{property1:1,property2:1}}, function(doc){
+    console.log(doc); // will only contain the selected properties
+});
+</code></pre> 
+ 
+<h1>Unsubscribe</h1> 
+ 
+<p>In order to unsubscribe a subscription, you call the function returned when subscribing</p> 
+ 
+<pre><code>var sub = pubsub.subscribe({foo:'bar'},function(doc) {
+    console.log(doc);
+}); // creates the subscription
+ 
+sub(); // removes the subscription
+</code></pre> 
+ 
+<h1>Token and authentication</h1> 
+ 
+<p>As a subscriber you can use authentication to make sure that you can trust the data you subscribe to. In order to do this the publisher must provide signed 'authenticated' properties. The signed properties are provided by the token.</p> 
+ 
+<p>As a publisher you can use authentication to limit the subscribers by the data by demanding that they use signed properties in their subscription queries.</p> 
+ 
+<pre><code>var token = ... get authtoken from you authentication enpoint
+// in order for the hub to verifed the signed token it need to share key with the authentication enpoint
+ 
+// we subscribe as a signed user so publishers can trust us
+pubsub.subscribe({to: token.user, from: {$authenticated:'user',value:'transmitter'}}, function(doc) {
+    // the doc.from was authenticated as a user, the doc can therefore be trusted
+});
+ 
+// we want to limit the subscribers to authenticated users only
+pubsub.publish({to: {$authenticated:'user', value:'receiver'},from: token.user});
+</code></pre> 
+ 
+<h1>The Query Language</h1> 
+ 
+<p>The query language syntax is derived from the query language of <a href="http://mongodb.com">mongodb</a>. <br /> 
+In general any property of a query that is not a language property represents a <code>===</code> relation,
+except if it is a regex - it is then the same as a <code>$regex</code> relation.</p> 
+ 
+<p>The language consists of 2 parts. The outer language <code>{$outer:...}</code> and the inner language <code>{prop:{$inner:...}}</code>.</p> 
+ 
+<h2>The outer language</h2> 
+ 
+<p><code>$has: key(s)</code> checks if the document has the given keys. multiple has an <code>and</code> relation <br /> 
+<code>$or: [paths]</code> define multiple query paths</p> 
+ 
+<pre><code>var query = { 
+    $or: [{
+        name:'mafintosh' // check where the name is mafintosh
+    }, {
+        {$has:'alias'}   // or wether it has a property called alias
+    }]
+};
+</code></pre> 
+ 
+<h2>The inner language</h2> 
+ 
+<p><code>$exists: bool</code>    checks if the given property exists <br /> 
+<code>$nil: bool</code>       is <code>undefined</code> or <code>null</code>  </p> 
+ 
+<pre><code>var query = {
+    name: {$nil:false},   // will reject if name is null or undefined
+    coupling: {$exists:false} // document must not have a property called coupling
+};
+</code></pre> 
+ 
+<p><code>$any: value(s)</code>   is equal to any of the values <br /> 
+<code>$regex: regex</code>    must match regex <br /> 
+<code>$like: substr</code>    property must have a substring which is case-insensitive equal to substr  </p> 
+ 
+<pre><code>var query = {
+    name: {$any:['mathias', 'ian']},  // name must be equal to either mathias or ian
+    project: /pubsub\.io/i            // project should have a substring pubsub.io in any case
+};
+</code></pre> 
+ 
+<p><code>$gt: num</code>         must be strictly greater than the num <br /> 
+<code>$gte: num</code>        must be greater or equal than the num <br /> 
+<code>$lt: num</code>         must be strictly lower than the num <br /> 
+<code>$lte: num</code>        must be lower or equal than the num <br /> 
+<code>$mod: [base,val]</code> same as <code>property % base === val</code>  </p> 
+ 
+<pre><code>var query = {
+    age: {$gt:20, $lte:40, $mod:[2,0]} // only match even ages between 20+ and 40        
+};
+</code></pre> 
+ 
+<p><code>$not: value</code>      must not be equal to value or match value if it is a regex  </p> 
+ 
+<p>All language properties can be negated by putting <code>$not</code> in front of it,
+i.e. <code>$notnil</code> checks if a property is different from <code>undefined</code> and <code>null</code></p> 
+ 
+<pre><code>var query = {
+    friend: {$notlike:'nemesis'} // our friend must not contain the substring nemesis
+};
+</code></pre></div>
+<script src='/s/sh.js'></script>
+</body></html> 
+ 
