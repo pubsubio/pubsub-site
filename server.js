@@ -10,3 +10,5 @@ server.file('/pubsub.io.js','./s/pubsub.io.js');
 server.file('./s/404.html',{status:404});
 
 server.listen(process.argv[2] || 9000);
+
+process.on('uncaughtException', function(err) { console.log(err.stack) });
