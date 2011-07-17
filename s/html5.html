@@ -1,0 +1,79 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title>pubsub.io</title> 
+		<link href='http://fonts.googleapis.com/css?family=Monofett' rel='stylesheet' type='text/css'>		
+		<link href="/s/reset.css" rel="stylesheet" type="text/css">
+		<link href="/s/style.css" rel="stylesheet" type="text/css">
+		<style> 			
+			#main {
+				margin: auto;
+				width: 610px;
+				left: 300px;
+				position: absolute;
+			}
+			#nav {
+				position: absolute;
+				top: 170px;
+				left: 25px;
+			}
+			#nav a {
+				display: block;
+				margin-bottom: 15px;
+			}
+			#by {
+				padding-top: 30px;
+			}
+			#by a {
+				font-size: 15px;
+			}
+			a {
+				font-size: 20px;
+				text-decoration: none;
+			}
+			p {
+				margin-bottom: 5px;
+			}
+		</style>
+	</head> 
+	<body> 
+		<nav>
+			<a href='/docs'>documentation</a>
+			<a href='/slides'>slides</a>
+			<a href='https://github.com/pubsubio'>github</a>
+			<div id='by'>
+				<a href='http://twitter.com/ianjorgensen'>@ianjorgensen</a>
+				<a href='http://twitter.com/mafintosh'>@mafintosh</a>
+			</div>
+		</nav>
+		<section id='main'>
+			<header>
+				<h1>PUBSUB.IO</h1>
+				<h2>a query based message hub</h2>
+			</header>
+			<pre><code>
+				// connect from node
+				var pubsub = require('pubsub.io').connect('hub.pubsub.io');
+				// or the browser
+				var pubsub = pubsub.connect('hub.pubsub.io');
+
+				pubsub.subscribe({
+					hello:{$any:['world','mundo','verden']}
+				}, function(doc) {
+					console.log(doc);
+				});
+
+				pubsub.publish({hello:'world'});
+			</code></pre>
+			<p>
+				clients are currently available for <a href='http://nodejs.org'>node.js</a>
+			</p>
+			<pre><code>npm install pubsub.io</code></pre>
+			<p>
+				and browser side js
+			</p>
+			<pre><code>&lt;script src='http://pubsub.io/pubsub.io.js'&gt;&lt;/script&gt;</code></pre>
+		</section>
+		<script src='/s/highlight.js'></script>
+	</body> 
+</html>
