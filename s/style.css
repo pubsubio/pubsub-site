@@ -23,6 +23,12 @@ pre {
 	padding: 20px 15px;
 	margin-bottom: 25px;
 }
+#by {
+	padding-top: 30px;
+}
+#by a {
+	font-size: 15px;
+}
 code {
 	font-size: 14px;
 	font-family: Monaco, Consolas, 'Lucida Console', monospace;;
