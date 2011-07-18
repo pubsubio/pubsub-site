@@ -115,11 +115,11 @@ var pubsub = pubsub.connect('localhost');
 
 			<p>In order to unsubscribe a subscription, you call the function returned when subscribing</p>
 
-			<pre><code>var sub = pubsub.subscribe({foo:'bar'},function(doc) {
+			<pre><code>var unsub = pubsub.subscribe({foo:'bar'},function(doc) {
 	console.log(doc);
 }); // creates the subscription
 
-sub(); // removes the subscription</code></pre>
+unsub(); // removes the subscription</code></pre>
 
 			<h1>Token and authentication</h1>
 
