@@ -1,2 +1,49 @@
-(function(b){(function(){if(typeof b==="undefined"){var h=function(){},e={},d={};b=function(a){if(arguments.length>1){for(var f=b(arguments[0]),g=1;g<arguments.length;g++)b(arguments[g]);return f}a=a.split("@")[0];if(d[a]&&!e[a]){f=d[a];delete d[a];var c=e[a]=function(){return c.exports};c.browser=!0;c.exports={};f(c,c.exports)}return window[a]||(e[a]||h)()};b.define=function(a,b){d[a]=b}}})();b.define("pubsub.io",function(){});window["pubsub"]=b("pubsub.io")})();
+(function(require) {
+(function() {
+	if (typeof require !== 'undefined') {
+		return; // define only once
+	}
+	
+	var noop = function() {};
+	var modules = {};
+	var definitions = {};
+	
+	require = function(name) {
+		if (arguments.length > 1) { // this syntax allows for and module and it's plugins to be loaded
+			var val = require(arguments[0]);
 
+			for (var i = 1; i < arguments.length; i++) {
+				require(arguments[i]);
+			}
+			return val;
+		}
+		name = name.split('@')[0]; // TODO: make this versioning a lot better
+		
+		if (definitions[name] && !modules[name]) { // if not already loaded and an def exists
+			var def = definitions[name];
+			
+			delete definitions[name];
+			
+			var module = modules[name] = function() {
+				return module.exports;
+			};
+			
+			module.browser = true; // allows for non-hacky browser js detection
+			module.exports = {};
+			
+			def(module, module.exports);
+		}
+		
+		return window[name] || (modules[name] || noop)();
+	};
+	
+	require.define = function(name, def) {
+		definitions[name] = def;
+	};
+}());
+require.define("pubsub.io", function(module, exports) {
+
+});
+window["pubsub"] = require("pubsub.io");
+
+}());
