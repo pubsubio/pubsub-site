@@ -44,10 +44,10 @@
 		<div id='main'>
 			<div class='logo'>PUBSUB.IO</div>
 			<h2 class='sub-text'>a query based message hub</h2> 
-			<pre><code>// connect from node
-var pubsub = require('pubsub.io').connect('hub.pubsub.io');
+			<pre><code id='hello-world'>// connect from node
+var pubsub = require('pubsub.io').connect('hub.pubsub.io/$sub');
 // or the browser
-var pubsub = pubsub.connect('hub.pubsub.io');
+var pubsub = pubsub.connect('hub.pubsub.io/$sub');
 
 pubsub.subscribe({
 	hello:{$any:['world','mundo','verden']}
@@ -65,6 +65,10 @@ pubsub.publish({hello:'world'});</code></pre>
 ./pubsub-hub/lib/server.js</code></pre>
 		</div>
 		<script src='/s/sh.js'></script>
+		<script>
+		var id = document.getElementById('hello-world');
+		id.innerHTML = id.innerHTML.replace(/\$sub/g, Math.floor(Math.random() * 9999999));
+		</script>
 		<script type="text/javascript">
 
 		  var _gaq = _gaq || [];

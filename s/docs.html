@@ -70,6 +70,25 @@
 			<h2 class='sub-text'>documentation</h2>
 			<p><strong>A query based client/server publish subscribe protocol built on node.js.</strong></p>
 
+			<h1>Connect</h1>
+			
+			<p>Connect to a sub hub</p>
+			
+			<pre><code>//in node do
+var pubsub = require('pubsub.io');
+// on the browser do
+&lt;script src='http://pubsub.io/pubsub.io.js'&gt;&lt;/script&gt;
+
+// connect to localhost on port 9999 on the chat sub hub
+var pubsub = pubsub.connect('localhost:9999/chat');
+
+// or connect to the default sub hub
+var pubsub = pubsub.connect('localhost:9999');
+
+// connect to the default port
+var pubsub = pubsub.connect('localhost');
+</code></pre>
+				
 			<h1>Publish</h1>
 
 			<p>Whenever you want to send documents to other pubsub clients you need to publish it.
