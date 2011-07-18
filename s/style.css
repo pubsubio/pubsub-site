@@ -19,7 +19,12 @@ a {
 	color: #A9B0B3;
 	text-decoration: none;
 }
-pre {
+
+code {
+	background-color: #030C22;
+	padding: 3px;	
+}
+pre.sh_sourceCode {
 	background-color: #030C22;
 	padding: 20px 15px;
 	margin-bottom: 25px;
