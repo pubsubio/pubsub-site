@@ -47,9 +47,11 @@
 				display: block;
 				margin-bottom: 15px;
 			}
+			#nav > a {
+				font-size: 20px;				
+			}
 
  			a {
-				font-size: 20px;
 				text-decoration: none;
 			}
 		</style> 
@@ -74,7 +76,7 @@
 			
 			<p>Connect to a sub hub</p>
 			
-			<pre><code>//in node do
+			<pre><code>// in node do
 var pubsub = require('pubsub.io');
 // on the browser do
 &lt;script src='http://pubsub.io/pubsub.io.js'&gt;&lt;/script&gt;
@@ -102,8 +104,8 @@ var pubsub = pubsub.connect('localhost');
 			The subscription is evaluated at the hub against all documents as they are published, if the query matches the published document your subscription handler will invoked with the document.</p>
 
 			<pre><code>pubsub.subscribe({name: 'pubsub', version: {$gt:0}}, function(doc) {
-			    console.log('i love',doc);
-			});</code></pre>
+	console.log('i love',doc);
+});</code></pre>
 
 			<p>You can choose to filter the document with a selction.</p>
 
@@ -115,11 +117,11 @@ var pubsub = pubsub.connect('localhost');
 
 			<p>In order to unsubscribe a subscription, you call the function returned when subscribing</p>
 
-			<pre><code>var sub = pubsub.subscribe({foo:'bar'},function(doc) {
-    console.log(doc);
+			<pre><code>var unsub = pubsub.subscribe({foo:'bar'},function(doc) {
+	console.log(doc);
 }); // creates the subscription
 
-			sub(); // removes the subscription</code></pre>
+unsub(); // removes the subscription</code></pre>
 
 			<h1>Token and authentication</h1>
 
@@ -186,8 +188,7 @@ pubsub.publish({to: {$authenticated:'user', value:'receiver'},from: token.user})
 
 			<pre><code>var query = {
     age: {$gt:20, $lte:40, $mod:[2,0]} // only match even ages between 20+ and 40        
-};
-			</code></pre>
+};</code></pre>
 
 			<p><code>$distance: circle</code>        check if point is within a circle  <code>{lat:0,lon:0}</code> with radius <code>800 km|m|mi|yd|ft</code></p>
 
