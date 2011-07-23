@@ -716,8 +716,7 @@ require.define("JSON", function(module, exports) {
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
 
-var JSON;
-if (!JSON) {
+if (typeof JSON === 'undefined') {
     JSON = {};
 }
 
@@ -1229,8 +1228,12 @@ var common = require('common');
 
 var noop = function() {};
 
-var normalize = function(host) {
-	var result = (host.match(/([^:\/]*)(?::(\d+))?(?:\/(.*))?/) || []).slice(1);
+var parse = function(host) {
+	if (host && typeof host === 'object') {
+		return host;
+	}
+	
+	var result = ((host || '').match(/([^:\/]*)(?::(\d+))?(?:\/(.*))?/) || []).slice(1);
 	
 	return {
 		host: result[0] || 'localhost',
@@ -1238,9 +1241,23 @@ var normalize = function(host) {
 		sub: result[2] || '/'
 	};
 };
+var normalize = function(query) {
+	for (var i in query) {
+		if (Object.prototype.toString.call(query[i]) === '[object RegExp]') {
+			query[i] = {$regex:''+query[i]};
+			continue;
+		}
+		if (typeof query === 'object') {
+			query[i] = normalize(query[i]);
+			continue;
+		}
+	}
+	return query;
+};
 
 exports.connect = function(host) {
-	host = normalize(host || '');
+	host = parse(host);
+
 	var socket = sockets.connect(host.host + ':' + host.port);
 
 	var pubsub = {};
@@ -1264,31 +1281,15 @@ exports.connect = function(host) {
 
 		subscriptions[id] = callback;
 
-		socket.send({name:'subscribe', id:id, query:query, selection:selection});
+		socket.send({name:'subscribe', id:id, query:normalize(query), selection:selection});
 		
 		return function() {
+			delete subscriptions[id];
 			socket.send({name:'unsubscribe', id:id});
 		};
 	};
-	pubsub.publish = function(doc) {
-		socket.send({name:'publish', doc:doc});
-	};
-	pubsub.auth = function(type,val) {
-		if (typeof type === 'object') {
-			var result = {};
-			
-			for (var i in type) {
-				result[i] = pubsub.auth(type[i],i);
-			}
-			
-			return result;
-		}
-		if (!val) {
-			val = type;
-			type = 1;
-		}
-		
-		return {$authenticated:type, value:val};
+	pubsub.publish = function(doc, challenge) {
+		socket.send({name:'publish', doc:doc, challenge:challenge});
 	};
 	
 	return pubsub;
@@ -1308,4 +1309,4 @@ if (!module.browser) {
 		};
 	};
 }
-}({browser:true}, window.pubsub = {}));
+}({browser:true}, window.pubsubio = {}));
