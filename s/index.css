@@ -17,9 +17,12 @@ a {
 	text-decoration: none;
 }
 p {
+	line-height: 20px;
 	margin-bottom: 5px;
 }
-
+#aim {
+	margin-bottom: 20px;
+}
 a {
 	
 }

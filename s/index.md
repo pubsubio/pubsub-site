@@ -1,3 +1,5 @@
+This is how we say "hello world"
+
 	// connect from node
 	var pubsub = require('pubsub.io').connect('hub.pubsub.io/$sub');
 	// or the browser
@@ -19,7 +21,7 @@ and browser side js
 
 	<script src='http://pubsub.io/pubsub.io.js'></script>
 
-you can also run the hub locally
+try running the hub locally
 
 	git clone git@github.com:pubsubio/pubsub-hub.git
 	./pubsub-hub/lib/server.js

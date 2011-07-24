@@ -15,21 +15,21 @@ Connect to a sub hub
 	
 # Publish
 
-Whenever you want to send documents to other pubsub clients you need to publish it.
+Whenever you want to send documents to other pubsub.io clients you need to publish it.
 The published document is then received by all subscribers whose query match the document.
 
 	pubsub.publish({name: 'pubsub', authors: ['mathias', 'ian'], version: 0.1});
 
 # Subscribe
 
-Whenever you want to receive documents from other pubsub clients you need to create a subscription with a query.
+Whenever you want to receive documents from other pubsub.io clients you need to create a subscription with a query.
 The subscription is evaluated at the hub against all documents as they are published, if the query matches the published document your subscription handler will invoked with the document.
 
 	pubsub.subscribe({name: 'pubsub', version: {$gt:0}}, function(doc) {
 		console.log('i love', doc);
 	});
 
-You can choose to filter the document with a selction.
+You can choose to filter the document with a selection.
 
 	pubsub.subscribe(query, {property1:1, property2:1}, function(doc){
 		console.log(doc); // will only contain the selected properties
@@ -95,7 +95,7 @@ The language consists of 2 parts. The outer language `{$outer:...}` and the inne
 
 `$any: value(s)`   is equal to any of the values 
 `$regex: regex`    must match regex 
-`$like: substr`    property must have a substring which is case-insensitive equal to substr  
+`$like: substring`    property must have a substring which is case-insensitive equal to substring  
 
 	var query = {
 		name: {$any:['mathias', 'ian']},  // name must be equal to either mathias or ian
