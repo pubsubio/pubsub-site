@@ -4,14 +4,14 @@
 	var pubsub = pubsubio.connect('hub.pubsub.io/$sub');
 
 	pubsub.subscribe({
-	hello:{$any:['world','mundo','verden']}
+		hello:{$any:['world','mundo','verden']}
 	}, function(doc) {
-	console.log(doc);
+		console.log(doc);
 	});
 
 	pubsub.publish({hello:'world'});
 	
-clients are currently available for nodejs
+clients are currently available for node.js
 
 	npm install pubsub.io
 
