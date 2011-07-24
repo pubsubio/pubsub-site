@@ -33,7 +33,6 @@ switch(page) {
 			<a href='/about'>about</a>
 			<a href='/docs'>documentation</a>
 			<a href='/slides'>slides</a>
-			<a href='/issues'>issues</a>
 			<a href='https://github.com/pubsubio'>github</a>
 			<div id='by'>
 				<a href='http://twitter.com/ianjorgensen'>@ianjorgensen</a>
@@ -46,7 +45,7 @@ switch(page) {
 			<h2 class='sub-text'><%= subTitle %></h2> 
 			<% } %>
 			<% if (page === 'index') {%>
-			<p id='aim'>Pubsub.io aims to be a scalable protocol agnostic hub, with client libraries for every major platform. Pubsub.io reduces coupling between publishers and subscribers and lets data be repurposed by freeing it from its channels. <a href='/about'>Learn more</a>.</p>  
+			<p id='aim'>Pubsub.io aims to be a scalable protocol agnostic hub, with client libraries for every major platform. Pubsub.io reduces coupling between publishers and subscribers and lets data be repurposed by freeing it from channels. <a href='/about'>Learn more</a>.</p>  
 			<%}%>
 			<%- file(mainfile) %>
 		</div>
