@@ -15,6 +15,9 @@ h2 {
 #nav a {
 	font-family: courier;
 }
+#nav > a {
+	font-size: 20px;
+}
 a {
 	color: #A9B0B3;
 	text-decoration: none;
