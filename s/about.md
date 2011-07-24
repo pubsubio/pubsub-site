@@ -1,5 +1,3 @@
-## the story
-
 Pubsub.io is an attempt to change the way we publish and consume live data. It does so by **focusing on the data**
 
 ## not channels
