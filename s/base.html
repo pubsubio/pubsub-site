@@ -45,9 +45,6 @@ switch(page) {
 			<% if (subTitle) {%>
 			<h2 class='sub-text'><%= subTitle %></h2> 
 			<% } %>
-			<% if (page === 'index') {%>
-			<p id='aim'>Pubsub.io is an attempt to change the way we publish and consume live data. It does so by focusing on the data.</p>
-			<%}%>
 			<%- file(mainfile) %>
 		</div>
 		<script src='/s/sh.js'></script>

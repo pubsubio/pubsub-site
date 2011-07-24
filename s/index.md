@@ -1,4 +1,4 @@
-This is how we say "hello world"
+Learn about [the mission](http://pubsub.io/about) or see how we say "hello world"
 
 	// connect from node
 	var pubsub = require('pubsub.io').connect('hub.pubsub.io/$sub');
