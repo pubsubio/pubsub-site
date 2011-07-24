@@ -26,7 +26,7 @@ Whenever you want to receive documents from other pubsub clients you need to cre
 The subscription is evaluated at the hub against all documents as they are published, if the query matches the published document your subscription handler will invoked with the document.
 
 	pubsub.subscribe({name: 'pubsub', version: {$gt:0}}, function(doc) {
-		console.log('i love',doc);
+		console.log('i love', doc);
 	});
 
 You can choose to filter the document with a selction.
