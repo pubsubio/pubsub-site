@@ -1,0 +1,41 @@
+h2 {
+	font-size: 20px;
+	font-style: italic;
+	margin-bottom: 25px;
+}
+#main {
+	margin: auto;
+	width: 610px;
+	left: 300px;
+	position: absolute;
+}
+#nav {
+	position: absolute;
+	top: 170px;
+	left: 25px;
+}
+#nav a {
+	display: block;
+	margin-bottom: 15px;
+}
+#by {
+	padding-top: 30px;
+}
+#by a {
+	font-size: 15px;
+}
+a {
+	font-size: 20px;
+	text-decoration: none;
+}
+p a {
+	font-size: 16px;
+	text-decoration: none;
+}
+p {
+	margin-bottom: 5px;
+	text-align: left;
+	color: #FFFFFF;
+	margin-bottom: 25px;
+	line-height: 25px;
+}

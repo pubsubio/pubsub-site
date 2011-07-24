@@ -1,0 +1,25 @@
+#main {
+	margin: auto;
+	width: 610px;
+	left: 300px;
+	position: absolute;
+}
+#nav {
+	position: absolute;
+	top: 170px;
+	left: 25px;
+}
+#nav a {
+	display: block;
+	margin-bottom: 15px;
+}
+a {
+	text-decoration: none;
+}
+p {
+	margin-bottom: 5px;
+}
+
+a {
+	
+}

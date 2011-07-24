@@ -1,86 +1,19 @@
-<!DOCTYPE html> 
-<html> 
-	<head> 
-		<title>pubsub.io</title> 
-		<link href='http://fonts.googleapis.com/css?family=Monofett' rel='stylesheet' type='text/css'>		
-		<link href="/s/reset.css" rel="stylesheet" type="text/css">
-		<link href="/s/style.css" rel="stylesheet" type="text/css">
-		<style> 			
-			#main {
-				margin: auto;
-				width: 610px;
-				left: 300px;
-				position: absolute;
-			}
-			#nav {
-				position: absolute;
-				top: 170px;
-				left: 25px;
-			}
-			#nav a {
-				display: block;
-				margin-bottom: 15px;
-			}
-			a {
-				font-size: 20px;
-				text-decoration: none;
-			}
-			p {
-				margin-bottom: 5px;
-			}
-		</style>
-	</head> 
-	<body> 
-		<div id='nav'>
-			<a href='/about'>about</a>
-			<a href='/docs'>documentation</a>
-			<a href='/slides'>slides</a>
-			<a href='https://github.com/pubsubio'>github</a>
-			<div id='by'>
-				<a href='http://twitter.com/ianjorgensen'>@ianjorgensen</a>
-				<a href='http://twitter.com/mafintosh'>@mafintosh</a>
-			</div>
-		</div>
-		<div id='main'>
-			<div class='logo'>PUBSUB.IO</div>
-			<h2 class='sub-text'>a query based message hub</h2> 
-			<pre><code id='hello-world'>// connect from node
+<pre><code id='hello-world'>// connect from node
 var pubsub = require('pubsub.io').connect('hub.pubsub.io/$sub');
 // or the browser
 var pubsub = pubsubio.connect('hub.pubsub.io/$sub');
 
 pubsub.subscribe({
-	hello:{$any:['world','mundo','verden']}
+hello:{$any:['world','mundo','verden']}
 }, function(doc) {
-	console.log(doc);
+console.log(doc);
 });
 
 pubsub.publish({hello:'world'});</code></pre>
-			<p>clients are currently available for nodejs</p>
-			<pre><code>npm install pubsub.io</code></pre>
-			<p> and browser side js</p>
-			<pre><code>&lt;script src='http://pubsub.io/pubsub.io.js'&gt;&lt;/script&gt;</code></pre>
-			<p>you can also run the hub locally</p>
-			<pre><code>git clone git@github.com:pubsubio/pubsub-hub.git
+<p>clients are currently available for nodejs</p>
+<pre><code>npm install pubsub.io</code></pre>
+<p> and browser side js</p>
+<pre><code>&lt;script src='http://pubsub.io/pubsub.io.js'&gt;&lt;/script&gt;</code></pre>
+<p>you can also run the hub locally</p>
+<pre><code>git clone git@github.com:pubsubio/pubsub-hub.git
 ./pubsub-hub/lib/server.js</code></pre>
-		</div>
-		<script src='/s/sh.js'></script>
-		<script>
-		var id = document.getElementById('hello-world');
-		id.innerHTML = id.innerHTML.replace(/\$sub/g, Math.floor(Math.random() * 9999999));
-		</script>
-		<script type="text/javascript">
-
-		  var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-24599059-1']);
-		  _gaq.push(['_trackPageview']);
-
-		  (function() {
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })();
-
-		</script>
-	</body> 
-</html>
