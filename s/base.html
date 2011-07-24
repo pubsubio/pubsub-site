@@ -44,9 +44,6 @@ switch(page) {
 			<% if (subTitle) {%>
 			<h2 class='sub-text'><%= subTitle %></h2> 
 			<% } %>
-			<% if (page === 'index') {%>
-			<p id='aim'>Pubsub.io aims to be a scalable protocol agnostic hub, with client libraries for every major platform. Pubsub.io reduces coupling between publishers and subscribers and lets data be repurposed by freeing it from channels. <a href='/about'>Learn more</a>.</p>  
-			<%}%>
 			<%- file(mainfile) %>
 		</div>
 		<script src='/s/sh.js'></script>
