@@ -46,6 +46,7 @@ server.get('/about', ontemplate('./s/base.html',{page:'about'}));
 server.get('/docs', ontemplate('./s/base.html', {page:'docs'}));
 server.file('/slides', './s/nodecamp.html');
 server.file('/pubsub.io.js', './s/pubsub.io.js');
+server.file('/t/sockets', './s/sockets-test.html');
 
 server.file('./s/404.html',{status:404});
 
