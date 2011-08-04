@@ -139,6 +139,18 @@ i.e. `$notnil` checks if a property is different from `undefined` and `null`
 	 friend: {$notlike:'nemesis'} // our friend must not contain the substring nemesis
 	};
 
+# HTTP Publish interface
+
+Messages can be published via an http post request. We did this so any client that can do http, can be a publisher.
+
+This is how you publish to the default hub
+
+	curl http://localhost:9999/publish -d '{"doc":{"hello":"world"}}'
+
+This is how you publish to a sub hub
+
+	curl http://localhost:9999/subhub/publish -d '{"doc":{"hello":"sub"}}'
+		
 # Transport protocol
 
 Messages are sent via a simple json based protocol
