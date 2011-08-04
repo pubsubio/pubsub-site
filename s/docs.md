@@ -145,11 +145,11 @@ Messages can be published via an http post request. We did this so any client th
 
 This is how you publish to the default hub
 
-	curl http://localhost:9999/publish -d '{"doc":{"hello":"world"}}'
+	curl http://hub.pubsub.io/publish -d '{"doc":{"hello":"world"}}'
 
 This is how you publish to a sub hub
 
-	curl http://localhost:9999/subhub/publish -d '{"doc":{"hello":"sub"}}'
+	curl http://hub.pubsub.io/subhub/publish -d '{"doc":{"hello":"sub"}}'
 		
 # Transport protocol
 
