@@ -35,6 +35,8 @@ switch(page) {
 			<a href='/about'>about</a>
 			<a href='/docs'>documentation</a>
 			<a href='/slides'>slides</a>
+			<a href='/console'>console</a>
+			<a href='/examples'>examples</a>
 			<a href='https://github.com/pubsubio'>github</a>
 			<div id='by'>
 				<a href='http://twitter.com/ianjorgensen'>@ianjorgensen</a>
@@ -51,7 +53,6 @@ switch(page) {
 		<script src='/s/sh.js'></script>
 		<script><%- file(jsfile) %></script>
 		<script type="text/javascript">
-
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-24599059-1']);
 		  _gaq.push(['_trackPageview']);
@@ -61,7 +62,6 @@ switch(page) {
 		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
-
 		</script>
 	</body> 
 </html>

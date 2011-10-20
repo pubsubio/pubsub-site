@@ -1,0 +1,135 @@
+<html>
+<head>
+	<title>Pubsub.io - examples</title>
+		<style>
+		body, html {
+			font-family: verdana;
+			font-size: 20px;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin:0;
+		}
+		h2 {
+			font-family: verdana;
+			font-weight: normal;
+		}
+		#messages {
+			padding: 0 10px;
+			padding-top: 10px;
+			width: 600px;
+			position: absolute;
+			top: 0px;
+			bottom: 220px;
+		}
+		.message {
+			float: left;
+			clear: both;
+			margin: 3px 0px;
+			padding: 10px;
+			border: 1px solid #ccc;
+		}
+		.sub {
+			color:gray;
+		}
+		#command {
+			width: 100%;
+			position: fixed;
+			margin-top:-220px;
+			padding-top: 10px;
+			background-color:white;
+			height:220px;
+		}
+	</style>
+	<script src='/s/jquery.js'></script>
+	<script src='/s/common.js'></script>
+	<script src='/s/pubsub.io.js'></script>
+	<script>
+		var pubsub;
+
+		$(function() {
+			var hash = window.location.hash;
+			var hub = '';
+			
+			var berlin = {
+			  lon: 52.523,
+			  lat: 13.412
+			};
+
+			var docs = [
+				{hi:1},
+				{id:1},
+				{
+				  point:{
+				  lon: 59.914,
+				  lat: 10.752},
+				  location:'oslo'
+				},
+				berlin,
+				{time: new Date()}
+			];
+			var subs = [
+				{},
+				{id:{$gt:1}},
+				{point: {$distance: {center:berlin,radius:900}}},
+				{time: {$datetime: 'tuesday 2011'}},
+				{time: {$datetime: 'september'}},
+				{time: {$datetime: 'tuesday 14:--:--'}},
+				{time: {$datetime: 'tuesday 14:--:-- -7 '}}
+			];
+
+			if (hash) {
+				hub = '/' + hash.substring(1);
+			}
+
+			pubsub = pubsubio.connect('localhost:9999' + hub);
+
+			$('#messages').append('<h2>Publish</h2>');
+
+			var i = 0;
+			docs.forEach(function(doc) {
+				var div = common.format('<div id="message">' +
+					'<pre id="console">' +
+						'{0}' + 
+					'</pre>' +
+					'<a id="publish-{1}" href="#">publish</a>' +
+				'</div>',JSON.stringify(doc,null,4),i++);
+				
+				$('#messages').append(div);
+
+				$('#publish-' + i).click(function(){
+					alert();
+					pubsub.publish(doc);
+				});
+			});
+
+			i = 0;
+			docs.forEach(function(doc) {
+				$('#publish-' + i++).click(function(){
+					pubsub.publish(doc);
+					return false;
+				});
+			});
+
+			$('#messages').append('<h2>Subscribe</h2>');
+
+			subs.forEach(function(sub) {
+				var div = common.format('<div id="message">' +
+					'<pre id="console">' +
+						'{0}' +
+					'</pre>' +
+					'<a target="_blank" href="/console?subscribe={1}">subscribe</a>' +
+				'</div>',JSON.stringify(sub,null,4),encodeURIComponent(JSON.stringify(sub)));
+				
+				$('#messages').append(div);
+			});
+		});
+		
+	</script>
+</head>
+<body>
+	<div id='main'>
+		<div id='messages'></div>
+	</div>
+</body>
+</html>

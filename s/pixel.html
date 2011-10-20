@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<title>Blinkenphonen pixel</title>
+		<script src='/s/style.js'></script>
+		<script src='/s/pubsub.io.js'></script>
+		<script>
+		pubsub = pubsubio.connect('localhost:9999/matrix');
+			
+		$(function () {
+			var cords;
+			if(window.location.search.indexOf('y') !== -1) {
+				cords = window.location.search.match(/\?x=(\d+)\&y=(\d+)/);
+			} else {
+				cords = window.location.search.match(/\?(\d+)x(\d+)/);
+			}
+			
+			var connect = function() {
+				var key = cords[1] + '-' + cords[2];
+				
+				var selection = {};
+				selection[key] = 1;
+				
+				pubsub.subscribe({$has:key},selection, function (doc) {
+					$('body').css('background-color',doc[key]);
+
+					pubsub.publish({
+						echo:'pixel',
+						key: key,
+						color: doc[key]
+					});
+				});	
+				
+				pubsub.onclose = function() {
+					setTimeout(connect, 5000);
+				};
+			};
+			
+			connect();			
+		});
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

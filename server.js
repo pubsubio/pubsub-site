@@ -44,8 +44,13 @@ var ontemplate = function(template, locals) {
 server.get('/', ontemplate('./s/base.html',{page:'index'}));
 server.get('/about', ontemplate('./s/base.html',{page:'about'}));
 server.get('/docs', ontemplate('./s/base.html', {page:'docs'}));
+server.file('/console1', './s/console.html');
+server.file('/console', './s/console2.html');
+server.file('/map', './s/maps.html');
+server.file('/examples', './s/examples.html');
 server.file('/slides', './s/nodecamp.html');
 server.file('/pubsub.io.js', './s/pubsub.io.js');
+server.file('/s/{file}','./s');
 server.file('/t/sockets', './s/sockets-test.html');
 
 server.file('./s/404.html',{status:404});

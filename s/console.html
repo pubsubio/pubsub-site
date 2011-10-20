@@ -1,0 +1,153 @@
+<html>
+<head>
+	<title>Pubsub.io - console</title>
+		<style>
+		body, html {
+			font-family: verdana;
+			font-size: 20px;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin:0;
+		}
+		#main {
+			width: 600px;
+		}
+		#messages {
+			padding: 0 10px;
+			padding-top: 10px;
+			width: 600px;
+			position: absolute;
+			top: 0px;
+			bottom: 220px;
+		}
+		.message {
+			float: left;
+			max-width: 400px;
+			clear: both;
+			margin: 3px 0px;
+			padding: 10px;
+			border: 1px solid #ccc;
+		}
+		.sub {
+			color:gray;
+		}
+		#command {
+			width: 100%;
+			position: fixed;
+			margin-top:-220px;
+			padding-top: 10px;
+			background-color:white;
+			height:220px;
+		}
+		#meta {
+			color: #444;
+			padding: 2px 0;
+			height: 20px;
+			border-bottom: 3px solid black;
+		}		
+		textarea {
+			resize: none;
+			outline: none;
+			height: 100%;
+			width: 100%;
+			font-size: 20px;
+			padding: 10px;
+		}
+		select {
+			float: right;
+			font-size: 16px;
+		}
+	</style>
+	<script src='/s/jquery.js'></script>
+	<script src='/s/common.js'></script>
+	<script src='/s/query.js'></script>
+	<script src='/s/pubsub.io.js'></script>
+	<script>
+		var pubsub;
+		var unsubscribe;
+
+		$(function() {
+			var hash = window.location.hash;
+			var hub = '';
+			var query = {};
+
+			if(window.location.search) {
+				query = JSON.parse(parseQueryString((window.location.search || '  ').substring(1)).subscribe) || {};
+			}			
+			
+			if (hash) {
+				hub = '/' + hash.substring(1);
+				
+			}
+
+			var scroll = function() {
+				$('body').scrollTop($('body').prop('scrollHeight'));
+			};
+
+			var onmessage = function(doc) {
+				$('#console').append('<div class="message">' + JSON.stringify(doc, null, 4) + '</div>');	
+				scroll();
+			};
+			var onsubscribe = function(query) {
+				$('#console').append('<div class="message sub">Subscribed to:<br>' + JSON.stringify(query, null, 4) + '</div>');	
+				scroll();
+			};
+
+			var subscribe = function() {
+				var query = eval(common.format('({0})',$('#doc').prop('value')));
+				
+				unsubscribe();
+
+				unsubscribe = pubsub.subscribe(query, onmessage);
+				onsubscribe(query);
+			};
+
+			var publish = function() {
+				var doc = eval(common.format('({0})',$('#doc').prop('value')));
+				pubsub.publish(doc);
+			};
+
+			pubsub = pubsubio.connect('localhost:9999' + hub);
+			
+			unsubscribe = pubsub.subscribe(query, onmessage);
+			onsubscribe(query);
+
+			$('textarea').keydown(function(e) {
+				if (e.keyCode !== 13 ) {
+					return;
+				}
+				if (e.altKey || e.shiftKey) {
+					if($('#method').prop('selectedIndex')) {
+						subscribe();
+					} else {
+						publish();
+					}
+					return false;
+				}
+				return;
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id='main'>
+		<div id='messages'>
+			<div class='container'>
+				<pre id='console'></pre>
+			</div>
+			<div style='height:120px; clear:both;'></div>
+		</div>
+		<div style='height:100%'></div>
+		<div id='command'>
+			<div id='meta'>
+			<select id='method' style='float:right'>
+				<option value='publish'>publish</option>
+				<option value='subscribe'>subscribe</option>
+			</select>
+			</div>
+			<textarea id='doc' placeholder='shift+enter to publish/subscribe'></textarea>
+		</div>
+	</div>
+</body>
+</html>

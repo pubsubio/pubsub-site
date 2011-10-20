@@ -1,0 +1,225 @@
+<html>
+	<head>
+		<title>Blinkenphonen matrix</title>
+		<script src='/s/style.js'></script>
+		<script src='/s/pubsub.io.js'></script>
+		<script src='/s/jkey.js'></script>
+		<style>
+		td {
+			padding:20px;
+			border:3px solid lightgray;
+		}
+		
+		#desired {
+			float: left;
+			padding-right:20px;
+		}
+		#actual {
+			float: left;
+
+		}
+		body {
+			padding:15px;
+			font-family: 'Helvetica Neue',Helvetica,sans-serif;
+			font-size: 14px;
+		}
+		#details {
+			color: gray;
+			font-family: 'Helvetica Neue',Helvetica,sans-serif;
+			font-size: 14px;
+		}
+		</style>
+		<script>		
+		var xPos = 0;
+		var yPos = 0;
+		
+		var highlightpixel = function(xp,yp) {
+			$('td').css('border','3px solid lightgray');
+			$('#d-' + xp + '-' + yp).css('border','3px solid black');
+			$('#a-' + xp + '-' + yp).css('border','3px solid gray');
+		}
+		
+		$(function () {			
+			var pubsub = pubsubio.connect('localhost:9999/matrix');
+			var cords;
+			if(window.location.search.indexOf('y') !== -1) {
+				cords = window.location.search.match(/\?x=(\d+)\&y=(\d+)/);
+			} else {
+				cords = window.location.search.match(/\?(\d+)x(\d+)/);
+			}
+			
+			var x = parseInt(cords[1]);
+			var y = parseInt(cords[2]);
+			
+			var up = function(l) {
+				if(yPos > 0) {
+					yPos--;
+					highlightpixel(xPos,yPos);
+					return;
+				}
+				if(l !== 'l' && xPos === x-1) {
+					xPos = -1;
+				}
+				yPos = y-1;
+				right();		
+			};
+			var down = function() {
+				if(yPos < y-1) {
+					yPos++;
+					highlightpixel(xPos,yPos);
+					return;
+				}
+				if(xPos === 0) {
+					xPos = x;
+				}
+				yPos = 0;
+				left();
+			};
+			var left = function() {
+				if(xPos > 0) {
+					xPos--;
+					highlightpixel(xPos,yPos);
+					return;
+				}
+				if(xPos === 0 && yPos === 0) {
+					xPos = x-1;
+					yPos = y-1;
+					highlightpixel(xPos,yPos);
+					return;
+				}
+				xPos = x-1;
+				up();		
+			};
+			var right = function() {
+				if(xPos < x-1) {
+					xPos++;
+					highlightpixel(xPos,yPos);
+					return;
+				}
+				if(xPos === x-1 && yPos === y-1) {
+					xPos = 0.;
+					yPos = 0;
+					highlightpixel(xPos,yPos);
+					return;
+				}	
+				xPos = 0;
+				down();				
+			};
+			
+			var paint = function (colors) {
+				for( var color in colors) {
+					$('#d-' + color).css('background-color', colors[color]);
+				}
+			};
+
+			var refresh = function () {
+				for( var i = 0; i < x; i++) {
+					for( var j = 0; j < y; j++) {
+						var doc = {};							
+						var key = i + '-' + j;							
+						doc[key] = $('#d-' + key).css('background-color');
+						pubsub.publish(doc);
+						console.log(doc);
+					}
+				}
+			}
+			
+			var fill = function() {
+				for( var i = 0; i < x; i++) {
+					for( var j = 0; j < y; j++) {
+						$('#d-' + i + '-' + j).click();
+					}
+				}
+			}
+			
+			var clear = function () {
+				paint(init);
+				pubsub.publish(init);
+				console.log(init);
+			};
+			
+			$(window).jkey('down', down);
+			$(window).jkey('up', up);
+			$(window).jkey('right', right);
+			$(window).jkey('left', left);
+			$(window).jkey('f', fill);
+			$(window).jkey('r', refresh);
+			$(window).jkey('esc', clear);
+									
+			$(window).jkey('space', function() {
+				$('#d-' + xPos + '-' + yPos).click();
+			});
+
+			var table = $('<table></table>');
+			var init = {};
+
+			for(var i = 0; i < y; i++) {
+				var row = $('<tr></tr>');
+				
+				for(var j = 0; j < x; j++) {
+					var td = $('<td id=d-'+j+'-'+i+'></td>');
+					
+					(function(j,i){
+						var key = j + '-' + i;
+						var state = 0;						
+						var colors = ['white', 'black', 'red', 'green', 'blue'];
+						
+						init[key] = colors[state];
+						
+						td.click(function() {	
+							var doc = {};							
+
+							state = (state + 1) % colors.length;
+														
+							$(this).css('background-color', colors[state]);
+							
+							xPos = j;
+							yPos = i;
+							
+							doc[key] = colors[state];
+							pubsub.publish(doc);
+							highlightpixel(j,i);
+						});
+					})(j,i);
+					
+					row.append(td);
+				}
+				table.append(row);
+			}
+			
+			$('#desired').append(table);
+			
+			var tableA = $('<table></table>');
+
+			for(var i = 0; i < y; i++) {
+				var row = $('<tr></tr>');
+				
+				for(var j = 0; j < x; j++) {
+					var td = $('<td id=a-'+j+'-'+i+'></td>');
+					row.append(td);
+				}
+				tableA.append(row);
+			}
+			
+			$('#actual').append(tableA);						
+			highlightpixel(xPos,yPos);
+
+			pubsub.publish(init);
+			
+			pubsub.subscribe({echo:'pixel'}, function(doc) {
+				$('#a-' + doc.key).css('background-color', doc.color);			
+			});
+		});
+		</script>
+	</head>
+	<body>
+		<p>Keyboard shortcuts : <span id='details'>esc - clear. arrows - move. space - paint, f - fill all, r - refresh all pixels</span></p>
+		<p>Example pixel subscription to coordinate 0x0 <a href='/s/pixel.html?0x0' target='_blank'>/s/pixel?0x0</a>
+		<div id='desired'>
+			<h2>Desired <span id='details'>(published pixels)</span></h2>
+		</div>
+		<div id='actual'>
+			<h2>actual <span id='details'>(pixel subscriptions)</span></h2>
+		</div>
+	</body>
+</html>
