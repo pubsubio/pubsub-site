@@ -95,7 +95,7 @@
 				pubsub.publish(doc);
 			};
 
-			pubsub = pubsubio.connect('localhost:9999' + hub);
+			pubsub = pubsubio.connect('hub.pubsub.io' + hub);
 			
 			unsubscribe = pubsub.subscribe(query, onmessage);
 			onsubscribe(query);
